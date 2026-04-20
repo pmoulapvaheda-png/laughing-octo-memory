@@ -1,0 +1,63 @@
+#include <LiquidCrystal.h>
+
+// LCD pins
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+
+// Pins
+int trigPin = 2;
+int echoPin = 3;
+int led = 4;
+int buzzer = 5;
+
+long duration;
+int distance;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(led, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  lcd.begin(16, 2);
+  lcd.print("Bus Stop Ready");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+
+  // Ultrasonic trigger
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read distance
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  lcd.setCursor(0,0);
+  lcd.print("Dist: ");
+  lcd.print(distance);
+  lcd.print("cm ");
+
+  // Condition
+  if(distance < 20) {
+    digitalWrite(led, HIGH);
+    digitalWrite(buzzer, HIGH);
+
+    lcd.setCursor(0,1);
+    lcd.print("Bus Arriving ");
+  } 
+  else {
+    digitalWrite(led, LOW);
+    digitalWrite(buzzer, LOW);
+
+    lcd.setCursor(0,1);
+    lcd.print("No Bus       ");
+  }
+
+  delay(500);
+}
